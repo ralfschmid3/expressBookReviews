@@ -41,57 +41,81 @@ public_users.post("/register", (req,res) => {
     //return res.status(300).json({message: "Yet to be implemented"});
 });
 
+
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-    //Write your code here
-    res.send(JSON.stringify(books, 4, null));
-    //return res.status(300).json({message: "Yet to be implemented"});
+
+    try {
+    
+	const getBooks_promise = new Promise((resolve,reject) => {
+	    res.send(JSON.stringify(books, 4, null));
+	});
+	getBooks_promise.then(console.log("Promise getBooks_promise resolved"));
+    } catch {
+	getBooks_promise.catch(console.log("Problem during promise. Could not get books."));
+    }
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
     //Write your code here
-    const isbn = req.params.isbn;
-    res.send(JSON.stringify(books[isbn]));
-    //return res.status(300).json({message: "Yet to be implemented"});
+    const book_by_isbn_promise = new Promise((resolve,reject) => {
+	const isbn = req.params.isbn;
+	res.send(JSON.stringify(books[isbn]));
+    });
+    try {
+	book_by_isbn_promise.then(console.log("Book by isbn get delivered"));
+    } catch {
+	book_by_isbn_promise.catch(console.log("Problem occurred in GET Book by isbn ."));
+    }
 });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-    //Write your code here
-    const author = req.params.author;
-    const booksArray = Object.entries(books).map(([isbn, book]) => ({
-        isbn: Number(isbn),
-        ...book
-    }));
 
-    const books_author = booksArray.filter((book) => book.author == author);
-    
-    res.send(JSON.stringify(books_author));
-    //res.send(JSON.stringify(author_isbns));
-    //return res.status(300).json({message: "Yet to be implemented"});
+    books_by_author_promise = new Promise((resolve,reject) => {	
+	const author = req.params.author;
+	const booksArray = Object.entries(books).map(([isbn, book]) => ({
+            isbn: Number(isbn),
+            ...book
+	}));
+	const books_author = booksArray.filter((book) => book.author == author);
+	res.send(JSON.stringify(books_author));
+    });
+
+    try {
+	books_by_author_promise.then(console.log("GET books by author delivered."));
+    } catch {
+	books_by_author_promise.then(console.log("Problem: GET books by author: not delivered."));
+    }
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
 
-    //Write your code here
-    const title = req.params.title;
-    const booksArray = Object.entries(books).map(([isbn, book]) => ({
-        isbn: Number(isbn),
-        ...book
-    }));
+    const book_by_title_promise = new Promise((resolve,reject) => {
 
-    const books_title = booksArray.filter((book) => book.title == title);
-    
-    res.send(JSON.stringify(books_title));
+	const title = req.params.title;
+	const booksArray = Object.entries(books).map(([isbn, book]) => ({
+            isbn: Number(isbn),
+            ...book
+	}));
 
-    //return res.status(300).json({message: "Yet to be implemented"});
+	const books_title = booksArray.filter((book) => book.title == title);
+	
+	res.send(JSON.stringify(books_title));
+    });
+
+    try {
+	book_by_title_promise.then(console.log("GET book by title delivered"));
+    } catch {
+	book_by_title_promise.catch(console.log("Problem occurred: GET book by title not delivered"));
+    }
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-    //Write your code here
+    
     const isbn = req.params.isbn;
     res.send(JSON.stringify(books[isbn].review));
     //return res.status(300).json({message: "Yet to be implemented"});
